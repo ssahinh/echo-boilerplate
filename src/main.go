@@ -1,6 +1,7 @@
 package main
 
 import (
+	"ModaLast/src/database"
 	"ModaLast/src/routes"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
@@ -13,7 +14,7 @@ func main() {
 	e.Use(middleware.Logger())
 
 	// Database connection
-	db, err := ConnectDb()
+	db, err := database.ConnectDb()
 	if err != nil {
 		log.Fatal("%s", err)
 	}

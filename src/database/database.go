@@ -1,4 +1,4 @@
-package main
+package database
 
 import (
 	"ModaLast/src/models"
