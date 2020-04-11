@@ -11,13 +11,6 @@ import (
 	"time"
 )
 
-// jwtCustomClaims are custom claims extending default ones.
-type jwtCustomClaims struct {
-	Name  string `json:"name"`
-	Admin bool   `json:"admin"`
-	jwt.StandardClaims
-}
-
 func Register(db *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var err error
