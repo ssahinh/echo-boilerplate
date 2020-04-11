@@ -5,7 +5,6 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"
 	"golang.org/x/crypto/bcrypt"
-	"log"
 	"net/http"
 	"time"
 
@@ -51,14 +50,12 @@ func Login(db *gorm.DB) echo.HandlerFunc {
 
 		err = db.Debug().Model(models.User{}).Where("email = ?", email).Take(&user).Error
 		if err != nil {
-			log.Println(err)
-			return err
+			return c.JSON(http.StatusBadRequest, err)
 		}
 
 		err = models.VerifyPassword(user.Password, password)
 		if err != nil && err == bcrypt.ErrMismatchedHashAndPassword {
-			log.Println(err)
-			return err
+			return c.JSON(http.StatusBadRequest, err)
 		}
 
 		// set custom claims

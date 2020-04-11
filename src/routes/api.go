@@ -1,8 +1,8 @@
 package routes
 
 import (
-	"ModaLast/src/controllers"
 	"ModaLast/src/controllers/auth"
+	"ModaLast/src/controllers/home"
 	"ModaLast/src/middlewares"
 
 	//"github.com/dgrijalva/jwt-go"
@@ -16,5 +16,5 @@ func ApiRoutes(e *echo.Echo, db *gorm.DB) {
 	group.POST("/register", auth.Register(db))
 	group.POST("/login", auth.Login(db))
 
-	group.GET("/home", controllers.Hello, middlewares.IsLoggedIn)
+	group.GET("/home", home.Hello, middlewares.IsLoggedIn)
 }
