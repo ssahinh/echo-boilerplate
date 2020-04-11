@@ -1,7 +1,7 @@
 package main
 
 import (
-	"ModaLast/src/controllers/auth"
+	"ModaLast/src/routes"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 	"github.com/labstack/gommon/log"
@@ -19,9 +19,7 @@ func main() {
 	}
 
 	// Routes
-	// Auth
-	e.POST("/", auth.Register(db))
-	e.POST("/login", auth.Login(db))
+	routes.ApiRoutes(e, db)
 
 	// Start Server
 	e.Logger.Fatal(e.Start(":8000"))

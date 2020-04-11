@@ -7,9 +7,9 @@ import (
 
 type User struct {
 	gorm.Model
-	FullName string `gorm:"type:varchar(100);not null"`
-	Email    string `gorm:"type:varchar(100);unique_index;not null"`
-	Password string
+	FullName string `validate:"required|minLen:7"`
+	Email    string `validate:"email"`
+	Password string `validate:"required|minLen:6"`
 	Token    string
 }
 

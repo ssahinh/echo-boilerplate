@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
+	"github.com/gookit/validate"
 )
 
 // jwtCustomClaims are custom claims extending default ones.
@@ -24,12 +25,18 @@ func Register(db *gorm.DB) echo.HandlerFunc {
 		var err error
 		user := models.User{FullName: c.FormValue("fullname"), Email: c.FormValue("email"),
 			Password: c.FormValue("password")}
-		err = db.Debug().Model(&models.User{}).Create(&user).Error
-		if err != nil {
-			return c.JSON(http.StatusBadRequest, "Register Error")
-		}
+		v := validate.Struct(user)
 
-		return c.JSON(http.StatusOK, user)
+		if v.Validate() {
+			err = db.Debug().Model(&models.User{}).Create(&user).Error
+			if err != nil {
+				return c.JSON(http.StatusBadRequest, "Register Error")
+			}
+
+			return c.JSON(http.StatusOK, user)
+		} else {
+			return c.JSON(http.StatusBadRequest, v.Errors)
+		}
 	}
 }
 
