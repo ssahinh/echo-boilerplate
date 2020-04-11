@@ -2,14 +2,13 @@ package auth
 
 import (
 	"ModaLast/src/models"
+	"github.com/dgrijalva/jwt-go"
+	"github.com/gookit/validate"
 	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
 	"time"
-
-	"github.com/dgrijalva/jwt-go"
-	"github.com/gookit/validate"
 )
 
 // jwtCustomClaims are custom claims extending default ones.
@@ -29,12 +28,36 @@ func Register(db *gorm.DB) echo.HandlerFunc {
 		if v.Validate() {
 			err = db.Debug().Model(&models.User{}).Create(&user).Error
 			if err != nil {
-				return c.JSON(http.StatusBadRequest, "Register Error")
+				return c.JSON(http.StatusBadRequest, echo.Map{
+					"success": false,
+					"errors":  "Register error",
+				})
 			}
 
-			return c.JSON(http.StatusOK, user)
+			// Create token with claims
+			token := jwt.New(jwt.SigningMethodHS256)
+
+			// Set claims
+			claims := token.Claims.(jwt.MapClaims)
+			claims["name"] = user.FullName
+			claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
+
+			// Generate encoded token and send it as response
+			t, err := token.SignedString([]byte("secret"))
+			if err != nil {
+				return err
+			}
+
+			return c.JSON(http.StatusOK, echo.Map{
+				"success": true,
+				"data":    user,
+				"token":   t,
+			})
 		} else {
-			return c.JSON(http.StatusBadRequest, v.Errors)
+			return c.JSON(http.StatusBadRequest, echo.Map{
+				"success": false,
+				"errors":  v.Errors.String(),
+			})
 		}
 	}
 }
@@ -48,9 +71,12 @@ func Login(db *gorm.DB) echo.HandlerFunc {
 		email := c.FormValue("email")
 		password := c.FormValue("password")
 
-		err = db.Debug().Model(models.User{}).Where("email = ?", email).Take(&user).Error
-		if err != nil {
-			return c.JSON(http.StatusBadRequest, err)
+		userErr := db.Debug().Model(models.User{}).Where("email = ?", email).Take(&user).Error
+		if userErr != nil {
+			return c.JSON(http.StatusBadRequest, echo.Map{
+				"errors":  "Register error",
+				"success": false,
+			})
 		}
 
 		err = models.VerifyPassword(user.Password, password)
@@ -58,26 +84,23 @@ func Login(db *gorm.DB) echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, err)
 		}
 
-		// set custom claims
-		claims := &jwtCustomClaims{
-			"Jon Snow",
-			true,
-			jwt.StandardClaims{
-				ExpiresAt: time.Now().Add(time.Hour * 72).Unix(),
-			},
-		}
-
 		// Create token with claims
-		token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+		token := jwt.New(jwt.SigningMethodHS256)
 
-		// Generate encoded token and send it as response.
+		// Set claims
+		claims := token.Claims.(jwt.MapClaims)
+		claims["name"] = user.FullName
+		claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
+
+		// Generate encoded token and send it as response
 		t, err := token.SignedString([]byte("secret"))
 		if err != nil {
 			return err
 		}
 
 		return c.JSON(http.StatusOK, echo.Map{
-			"token": t,
+			"success": true,
+			"token":   t,
 		})
 	}
 }

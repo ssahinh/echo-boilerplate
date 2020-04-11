@@ -31,7 +31,7 @@ func ConnectDb() (*gorm.DB, error) {
 		fmt.Printf("Cannot connect to %s database", dbDriver)
 		log.Fatal("This is the error:", err)
 	} else {
-		fmt.Printf("We are connected to %s", db)
+		fmt.Printf("Connected to database")
 	}
 
 	// Drop tables
