@@ -1,7 +1,9 @@
 package models
 
 import (
+	"github.com/dgrijalva/jwt-go"
 	"github.com/jinzhu/gorm"
+	"github.com/labstack/echo"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -24,4 +26,10 @@ func (u *User) Hash(password string) ([]byte, error) {
 
 func VerifyPassword(hashedPassword, password string) error {
 	return bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
+}
+
+func GetUserIdFromToken(c echo.Context) string {
+	user := c.Get("user").(*jwt.Token)
+	claims := user.Claims.(jwt.MapClaims)
+	return claims["id"].(string)
 }
