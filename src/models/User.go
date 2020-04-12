@@ -9,7 +9,7 @@ import (
 
 type User struct {
 	gorm.Model
-	FullName string `validate:"required|minLen:7"`
+	FullName string
 	Email    string `validate:"email"`
 	Password string `validate:"required|minLen:6"`
 }
