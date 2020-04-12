@@ -1,7 +1,9 @@
 package post
 
 import (
+	"ModaLast/src/helpers"
 	"ModaLast/src/models"
+	"github.com/gookit/validate"
 	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"
 	"net/http"
@@ -64,6 +66,29 @@ func GetPostById(db *gorm.DB) echo.HandlerFunc {
 func CreatePost(db *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var err error
-		user := models.User{}
+		uId := helpers.UserIDFromToken(c)
+		post := models.Post{Title: c.FormValue("Title"),
+			Description: c.FormValue("Description"), UserId: uint(uId)}
+		v := validate.Struct(post)
+
+		if v.Validate() {
+			err = db.Debug().Model(&models.Post{}).Create(&post).Error
+			if err != nil {
+				return c.JSON(http.StatusBadRequest, echo.Map{
+					"success": false,
+					"errors":  err,
+				})
+			}
+
+			return c.JSON(http.StatusOK, echo.Map{
+				"success": true,
+				"data":    post,
+			})
+		} else {
+			return c.JSON(http.StatusBadRequest, echo.Map{
+				"success": false,
+				"errors":  v.Errors.String(),
+			})
+		}
 	}
 }
