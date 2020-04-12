@@ -92,3 +92,25 @@ func CreatePost(db *gorm.DB) echo.HandlerFunc {
 		}
 	}
 }
+
+func DeletePost(db *gorm.DB) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		pId := c.Param("id")
+		var err error
+		err = db.Debug().Model(&models.Post{}).Where("id = ?", pId).Take(&models.Post{}).Delete(&models.Post{}).Error
+
+		if db.Error != nil {
+			if gorm.IsRecordNotFoundError(db.Error) {
+				return c.JSON(http.StatusBadRequest, echo.Map{
+					"success": false,
+					"err":     db.Error,
+				})
+			}
+		}
+
+		return c.JSON(http.StatusOK, echo.Map{
+			"success": true,
+			"data":    err,
+		})
+	}
+}

@@ -26,6 +26,7 @@ func ApiRoutes(e *echo.Echo, db *gorm.DB) {
 
 	// Post
 	group.POST("/posts", post.CreatePost(db), middlewares.IsLoggedIn)
+	group.DELETE("/posts/:id", post.DeletePost(db))
 	group.GET("/posts", post.GetAllPosts(db))
 	group.GET("/posts/:id", post.GetPostById(db))
 }
