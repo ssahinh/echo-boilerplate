@@ -82,7 +82,9 @@ func Login(db *gorm.DB) echo.HandlerFunc {
 
 		// Set claims
 		claims := token.Claims.(jwt.MapClaims)
+		claims["id"] = user.ID
 		claims["name"] = user.FullName
+		claims["email"] = user.Email
 		claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
 
 		// Generate encoded token and send it as response
@@ -98,8 +100,8 @@ func Login(db *gorm.DB) echo.HandlerFunc {
 	}
 }
 
-func userIDFromToken(c echo.Context) string {
+func UserIDFromToken(c echo.Context) float64 {
 	user := c.Get("user").(*jwt.Token)
 	claims := user.Claims.(jwt.MapClaims)
-	return claims["id"].(string)
+	return claims["id"].(float64)
 }

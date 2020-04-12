@@ -12,7 +12,6 @@ type User struct {
 	FullName string `validate:"required|minLen:7"`
 	Email    string `validate:"email"`
 	Password string `validate:"required|minLen:6"`
-	Token    string
 }
 
 func (u *User) Hash(password string) ([]byte, error) {
