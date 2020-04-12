@@ -35,10 +35,10 @@ func ConnectDb() (*gorm.DB, error) {
 	}
 
 	// Drop tables
-	db.DropTable(&models.User{})
+	db.DropTable(&models.User{}, &models.Post{})
 
 	// Migrate tables
-	db.AutoMigrate(&models.User{})
+	db.AutoMigrate(&models.User{}, &models.Post{})
 
 	seeders.LoadSeeders(db)
 

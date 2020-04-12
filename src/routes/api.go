@@ -3,6 +3,7 @@ package routes
 import (
 	"ModaLast/src/controllers/auth"
 	"ModaLast/src/controllers/home"
+	"ModaLast/src/controllers/post"
 	"ModaLast/src/controllers/user"
 	"ModaLast/src/middlewares"
 
@@ -22,4 +23,8 @@ func ApiRoutes(e *echo.Echo, db *gorm.DB) {
 
 	// User
 	group.GET("/user/me", user.GetUserMe(db), middlewares.IsLoggedIn)
+
+	// Post
+	group.GET("/posts", post.GetAllPosts(db))
+	group.GET("/posts/:id", post.GetPostById(db))
 }

@@ -19,7 +19,7 @@ var users = []models.User{
 	},
 }
 
-func RunUserSeeder(db *gorm.DB) {
+func UserSeeder(db *gorm.DB) {
 	for i, _ := range users {
 		users[i].Hash(users[i].Password)
 		err := db.Debug().Model(&models.User{}).Create(&users[i]).Error
