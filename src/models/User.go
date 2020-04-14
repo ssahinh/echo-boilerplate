@@ -10,6 +10,7 @@ type User struct {
 	FullName string
 	Email    string `validate:"email"`
 	Password string `validate:"required|minLen:6"`
+	ImageUrl string
 }
 
 func (u *User) Hash(password string) ([]byte, error) {

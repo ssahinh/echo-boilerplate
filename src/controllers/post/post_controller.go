@@ -125,13 +125,13 @@ func UpdatePost(db *gorm.DB) echo.HandlerFunc {
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, echo.Map{
 				"success": false,
-				"error": err,
+				"error":   err,
 			})
 		}
 
 		return c.JSON(http.StatusOK, echo.Map{
 			"success": true,
-			"data": err,
+			"data":    err,
 		})
 	}
 }

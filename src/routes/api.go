@@ -23,6 +23,7 @@ func ApiRoutes(e *echo.Echo, db *gorm.DB) {
 
 	// User
 	group.GET("/user/me", user.GetUserMe(db), middlewares.IsLoggedIn)
+	group.POST("/user/update-image", user.UpdateUserImage(db), middlewares.IsLoggedIn)
 
 	// Post
 	group.POST("/posts", post.CreatePost(db), middlewares.IsLoggedIn)
