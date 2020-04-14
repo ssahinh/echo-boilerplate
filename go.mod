@@ -13,6 +13,7 @@ require (
 	github.com/lib/pq v1.3.0 // indirect
 	github.com/mailru/easyjson v0.7.1 // indirect
 	github.com/mattn/go-sqlite3 v2.0.3+incompatible // indirect
+	github.com/robfig/cron/v3 v3.0.0
 	github.com/stretchr/testify v1.5.1 // indirect
 	github.com/swaggo/echo-swagger v1.0.0
 	github.com/swaggo/swag v1.6.5 // indirect
