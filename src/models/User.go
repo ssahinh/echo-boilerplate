@@ -10,7 +10,8 @@ type User struct {
 	FullName string
 	Email    string `validate:"email"`
 	Password string `validate:"required|minLen:6"`
-	ImageUrl string
+	Image    Image
+	ImageId  uint `sql:"type:int REFERENCES images(id)"`
 }
 
 func (u *User) Hash(password string) ([]byte, error) {
